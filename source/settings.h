@@ -27,7 +27,6 @@ namespace Config {
 
 		USE_CUSTOM_DATA_DIRECTORY,
 		DATA_DIRECTORY,
-		EXTENSIONS_DIRECTORY,
 
 		MERGE_MOVE,
 		TEXTURE_MANAGEMENT,
@@ -35,8 +34,6 @@ namespace Config {
 		TEXTURE_CLEAN_THRESHOLD,
 		TEXTURE_LONGEVITY,
 		HARD_REFRESH_RATE,
-		USE_MEMCACHED_SPRITES,
-		USE_MEMCACHED_SPRITES_TO_SAVE,
 		SOFTWARE_CLEAN_THRESHOLD,
 		SOFTWARE_CLEAN_SIZE,
 		TRANSPARENT_FLOORS,
@@ -46,8 +43,10 @@ namespace Config {
 		SHOW_GRID,
 		SHOW_EXTRA,
 		SHOW_ALL_FLOORS,
-		SHOW_CREATURES,
-		SHOW_SPAWNS,
+		SHOW_MONSTERS,
+		SHOW_SPAWNS_MONSTER,
+		SHOW_NPCS,
+		SHOW_SPAWNS_NPC,
 		SHOW_HOUSES,
 		SHOW_SHADE,
 		SHOW_SPECIAL_TILES,
@@ -106,7 +105,6 @@ namespace Config {
 
 		ASSETS_DATA_DIRS,
 		DEFAULT_CLIENT_VERSION,
-		CHECK_SIGNATURES,
 
 		CURSOR_RED,
 		CURSOR_GREEN,
@@ -120,16 +118,25 @@ namespace Config {
 
 		SCREENSHOT_DIRECTORY,
 		SCREENSHOT_FORMAT,
-		MAX_SPAWN_RADIUS,
-		CURRENT_SPAWN_RADIUS,
-		AUTO_CREATE_SPAWN,
-		DEFAULT_SPAWNTIME,
+
+		MAX_SPAWN_MONSTER_RADIUS,
+		CURRENT_SPAWN_MONSTER_RADIUS,
+		AUTO_CREATE_SPAWN_MONSTER,
+		DEFAULT_SPAWN_MONSTER_TIME,
+		SPAWN_MONSTER_DENSITY,
+
+		MAX_SPAWN_NPC_RADIUS,
+		CURRENT_SPAWN_NPC_RADIUS,
+		AUTO_CREATE_SPAWN_NPC,
+		DEFAULT_SPAWN_NPC_TIME,
+
 		SWITCH_MOUSEBUTTONS,
 		DOUBLECLICK_PROPERTIES,
 		LISTBOX_EATS_ALL_EVENTS,
 		RAW_LIKE_SIMONE,
 		WORKER_THREADS,
 		COPY_POSITION_FORMAT,
+		COPY_AREA_FORMAT,
 
 		GOTO_WEBSITE_ON_BOOT,
 		INDIRECTORY_INSTALLATION,
@@ -189,8 +196,10 @@ public:
 	void setFloat(uint32_t key, float newval);
 	void setString(uint32_t key, std::string newval);
 
-	wxConfigBase& getConfigObject();
-	void setDefaults() { IO(DEFAULT); }
+	wxConfigBase &getConfigObject();
+	void setDefaults() {
+		IO(DEFAULT);
+	}
 	void load();
 	void save(bool endoftheworld = false);
 
@@ -203,27 +212,42 @@ public:
 	};
 	class DynamicValue {
 	public:
-		DynamicValue() : type(TYPE_NONE) {
+		DynamicValue() :
+			type(TYPE_NONE) {
 			intval = 0;
 		};
-		DynamicValue(DynamicType t) : type(t) {
-			if(t == TYPE_STR) strval = nullptr;
-			else if(t == TYPE_INT) intval = 0;
-			else if(t == TYPE_FLOAT) floatval = 0.0;
-			else intval = 0;
+		DynamicValue(DynamicType t) :
+			type(t) {
+			if (t == TYPE_STR) {
+				strval = nullptr;
+			} else if (t == TYPE_INT) {
+				intval = 0;
+			} else if (t == TYPE_FLOAT) {
+				floatval = 0.0;
+			} else {
+				intval = 0;
+			}
 		};
 		~DynamicValue() {
-			if(type == TYPE_STR)
+			if (type == TYPE_STR) {
 				delete strval;
+			}
 		}
-		DynamicValue(const DynamicValue& dv) : type(dv.type) {
-			if(dv.type == TYPE_STR) strval = newd std::string(*dv.strval);
-			else if(dv.type == TYPE_INT) intval = dv.intval;
-			else if(dv.type == TYPE_FLOAT) floatval = dv.floatval;
-			else intval = 0;
+		DynamicValue(const DynamicValue &dv) :
+			type(dv.type) {
+			if (dv.type == TYPE_STR) {
+				strval = newd std::string(*dv.strval);
+			} else if (dv.type == TYPE_INT) {
+				intval = dv.intval;
+			} else if (dv.type == TYPE_FLOAT) {
+				floatval = dv.floatval;
+			} else {
+				intval = 0;
+			}
 		};
 
 		std::string str();
+
 	private:
 		DynamicType type;
 		union {
@@ -234,6 +258,7 @@ public:
 
 		friend class Settings;
 	};
+
 private:
 	enum IOMode {
 		DEFAULT,

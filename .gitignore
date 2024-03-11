@@ -10,9 +10,11 @@ build-release
 CMakeLists.txt.user*
 
 # RME
+remeres
 rme
 rme.cfg
 data/user
+world
 
 # Visual Studio
 *.MAP
@@ -24,9 +26,9 @@ data/user
 *.obj
 *.db
 *.opendb
-*.user
 *.vs
 
+vcproj/
 vcproj/ipch/
 vcproj/Beta Release/
 vcproj/Debug/
@@ -39,7 +41,10 @@ vcproj/Project/x64/
 vcproj/Installer/Beta Release/
 vcproj/Installer/Debug/
 vcproj/Installer/Release/
+vcpkg_installed/
 .vscode/
+*.filters
+*.users
 
 # Xcode
 xcuserdata
@@ -48,3 +53,12 @@ xcuserdata
 # CLion
 .idea/
 cmake-build-debug/
+
+# User
+*.dll
+*.exe
+*.pdb
+*.rar
+*.lzma
+*.dat
+*.manifest

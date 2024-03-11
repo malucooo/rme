@@ -23,50 +23,57 @@ class Brushes;
 enum TilesetCategoryType {
 	TILESET_UNKNOWN,
 	TILESET_TERRAIN,
-	TILESET_CREATURE,
+	TILESET_MONSTER,
+	TILESET_NPC,
 	TILESET_DOODAD,
 	TILESET_ITEM,
 	TILESET_RAW,
 	TILESET_HOUSE,
 	TILESET_WAYPOINT,
+	TILESET_ZONES,
 };
 
 class TilesetCategory {
 public:
-	TilesetCategory(Tileset& parent, TilesetCategoryType type);
+	TilesetCategory(Tileset &parent, TilesetCategoryType type);
 	~TilesetCategory();
 
 	bool isTrivial() const;
-	TilesetCategoryType getType() const { return type; }
-	size_t size() const { return brushlist.size(); }
+	TilesetCategoryType getType() const {
+		return type;
+	}
+	size_t size() const {
+		return brushlist.size();
+	}
 
-	void loadBrush(pugi::xml_node node, wxArrayString& warnings);
+	void loadBrush(pugi::xml_node node, wxArrayString &warnings);
 	void clear();
 
 	bool containsBrush(Brush* brush) const;
 
 protected:
 	TilesetCategoryType type;
+
 public:
 	std::vector<Brush*> brushlist;
-	Tileset& tileset;
+	Tileset &tileset;
 
 private:
-	TilesetCategory(const TilesetCategory&);
-	TilesetCategory operator=(const TilesetCategory&);
+	TilesetCategory(const TilesetCategory &);
+	TilesetCategory operator=(const TilesetCategory &);
 };
 
 typedef std::vector<TilesetCategory*> TilesetCategoryArray;
 
 class Tileset {
 public:
-	Tileset(Brushes& brushes, const std::string& name);
+	Tileset(Brushes &brushes, const std::string &name);
 	~Tileset();
 
 	TilesetCategory* getCategory(TilesetCategoryType type);
 	const TilesetCategory* getCategory(TilesetCategoryType type) const;
 
-	void loadCategory(pugi::xml_node node, wxArrayString& warnings);
+	void loadCategory(pugi::xml_node node, wxArrayString &warnings);
 	void clear();
 
 	bool containsBrush(Brush* brush) const;
@@ -76,15 +83,15 @@ public:
 	TilesetCategoryArray categories;
 
 protected:
-	Brushes& brushes;
+	Brushes &brushes;
 
 protected:
-	Tileset(const Tileset&);
-	Tileset operator=(const Tileset&);
+	Tileset(const Tileset &);
+	Tileset operator=(const Tileset &);
 
 	friend class TilesetCategory;
 };
 
-typedef std::map<std::string, Tileset*> TilesetContainer;
+using TilesetContainer = std::map<std::string, Tileset*>;
 
 #endif

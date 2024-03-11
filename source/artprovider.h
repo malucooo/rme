@@ -46,7 +46,8 @@
 #define ART_PICKUPABLE_TOOLBAR wxART_MAKE_ART_ID(ART_PICKUPABLE_TOOLBAR)
 #define ART_MOVEABLE_TOOLBAR wxART_MAKE_ART_ID(ART_MOVEABLE_TOOLBAR)
 
-#define ART_SPAWNS wxART_MAKE_ART_ID(ART_SPAWNS)
+#define ART_MONSTERS wxART_MAKE_ART_ID(ART_MONSTERS)
+#define ART_NPCS wxART_MAKE_ART_ID(ART_NPCS)
 #define ART_HOUSE_EXIT wxART_MAKE_ART_ID(ART_HOUSE_EXIT)
 #define ART_PICKUPABLE wxART_MAKE_ART_ID(ART_PICKUPABLE)
 #define ART_MOVEABLE wxART_MAKE_ART_ID(ART_MOVEABLE)
@@ -68,10 +69,9 @@
 #define ART_REPLACE wxART_MAKE_ART_ID(ART_REPLACE)
 #define ART_CHANGE wxART_MAKE_ART_ID(ART_CHANGE)
 
-class ArtProvider : public wxArtProvider
-{
+class ArtProvider : public wxArtProvider {
 protected:
-	virtual wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size) override;
+	virtual wxBitmap CreateBitmap(const wxArtID &id, const wxArtClient &client, const wxSize &size) override;
 };
 
 #endif // RME_ART_PROVIDER_H_

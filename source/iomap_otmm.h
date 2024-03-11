@@ -51,16 +51,20 @@ enum OTMM_NodeTypes {
 	OTMM_TILE = 4,
 	OTMM_HOUSETILE = 5,
 	OTMM_ITEM = 6,
-	OTMM_SPAWN_DATA = 7,
-	OTMM_SPAWN_AREA = 8,
+	OTMM_SPAWN_MONSTER_DATA = 7,
+	OTMM_SPAWN_MONSTER_AREA = 8,
 	OTMM_MONSTER = 9,
-	OTMM_NPC = 10,
-	OTMM_TOWN_DATA = 11,
+	OTMM_EMPTY = 10 // It's not used
+	OTMM_TOWN_DATA
+	= 11,
 	OTMM_TOWN = 12,
 	OTMM_HOUSE_DATA = 13,
 	OTMM_HOUSE = 14,
 	OTMM_DESCRIPTION = 15,
 	OTMM_EDITOR = 16,
+	OTMM_NPC = 17,
+	OTMM_SPAWN_NPC_DATA = 18,
+	OTMM_SPAWN_NPC_AREA = 19,
 };
 
 #pragma pack()
@@ -73,13 +77,13 @@ public:
 	IOMapOTMM();
 	~IOMapOTMM();
 
-	virtual MapVersion getVersionInfo(const FileName& identifier);
+	virtual MapVersion getVersionInfo(const FileName &identifier);
 
-	virtual bool loadMap(Map& map, NodeFileReadHandle& handle, const FileName& identifier, bool showdialog);
-	virtual bool loadMap(Map& map, const FileName& identifier, bool showdialog);
+	virtual bool loadMap(Map &map, NodeFileReadHandle &handle, const FileName &identifier, bool showdialog);
+	virtual bool loadMap(Map &map, const FileName &identifier, bool showdialog);
 
-	virtual bool saveMap(Map& map, NodeFileWriteHandle& handle, const FileName& identifier, bool showdialog);
-	virtual bool saveMap(Map& map, const FileName& identifier, bool showdialog);
+	virtual bool saveMap(Map &map, NodeFileWriteHandle &handle, const FileName &identifier, bool showdialog);
+	virtual bool saveMap(Map &map, const FileName &identifier, bool showdialog);
 };
 
 #endif

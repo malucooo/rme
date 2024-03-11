@@ -28,7 +28,15 @@
 #include "editor_tabs.h"
 #include "map_tab.h"
 #include "palette_window.h"
-#include "client_version.h"
+#include "zone_brush.h"
+
+namespace canary {
+	namespace protobuf {
+		namespace appearances {
+			class Appearances;
+		}
+	}
+}
 
 class BaseMap;
 class Map;
@@ -40,7 +48,8 @@ class HouseExitBrush;
 class WaypointBrush;
 class OptionalBorderBrush;
 class EraserBrush;
-class SpawnBrush;
+class SpawnMonsterBrush;
+class SpawnNpcBrush;
 class DoorBrush;
 class FlagBrush;
 
@@ -50,7 +59,6 @@ class MapWindow;
 class MapCanvas;
 
 class SearchResultWindow;
-class DuplicatedItemsWindow;
 class MinimapWindow;
 class ActionsHistoryWindow;
 class PaletteWindow;
@@ -63,22 +71,21 @@ class LiveSocket;
 extern const wxEventType EVT_UPDATE_MENUS;
 extern const wxEventType EVT_UPDATE_ACTIONS;
 
-#define EVT_ON_UPDATE_MENUS(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( \
-        EVT_UPDATE_MENUS, id, wxID_ANY, \
-        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent(wxCommandEventFunction, &fn), \
-        (wxObject*) nullptr \
-    ),
+#define EVT_ON_UPDATE_MENUS(id, fn)                                                             \
+	DECLARE_EVENT_TABLE_ENTRY(                                                                  \
+		EVT_UPDATE_MENUS, id, wxID_ANY,                                                         \
+		(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxCommandEventFunction, &fn), \
+		(wxObject*)nullptr                                                                      \
+	),
 
-#define EVT_ON_UPDATE_ACTIONS(id, fn) \
-    DECLARE_EVENT_TABLE_ENTRY( \
-        EVT_UPDATE_ACTIONS, id, wxID_ANY, \
-        (wxObjectEventFunction)(wxEventFunction) wxStaticCastEvent(wxCommandEventFunction, &fn), \
-        (wxObject*) nullptr \
-    ),
+#define EVT_ON_UPDATE_ACTIONS(id, fn)                                                           \
+	DECLARE_EVENT_TABLE_ENTRY(                                                                  \
+		EVT_UPDATE_ACTIONS, id, wxID_ANY,                                                       \
+		(wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxCommandEventFunction, &fn), \
+		(wxObject*)nullptr                                                                      \
+	),
 
-class Hotkey
-{
+class Hotkey {
 public:
 	Hotkey();
 	Hotkey(Position pos);
@@ -86,14 +93,23 @@ public:
 	Hotkey(std::string _brushname);
 	~Hotkey();
 
-	bool IsPosition() const { return type == POSITION; }
-	bool IsBrush() const { return type == BRUSH; }
-	Position GetPosition() const { ASSERT(IsPosition()); return pos; }
-	std::string GetBrushname() const { ASSERT(IsBrush()); return brushname; }
+	bool IsPosition() const {
+		return type == POSITION;
+	}
+	bool IsBrush() const {
+		return type == BRUSH;
+	}
+	Position GetPosition() const {
+		ASSERT(IsPosition());
+		return pos;
+	}
+	std::string GetBrushname() const {
+		ASSERT(IsBrush());
+		return brushname;
+	}
 
 private:
-	enum
-	{
+	enum {
 		NONE,
 		POSITION,
 		BRUSH,
@@ -102,23 +118,22 @@ private:
 	Position pos;
 	std::string brushname;
 
-	friend std::ostream& operator<<(std::ostream& os, const Hotkey& hotkey);
-	friend std::istream& operator>>(std::istream& os, Hotkey& hotkey);
+	friend std::ostream &operator<<(std::ostream &os, const Hotkey &hotkey);
+	friend std::istream &operator>>(std::istream &os, Hotkey &hotkey);
 };
 
-std::ostream& operator<<(std::ostream& os, const Hotkey& hotkey);
-std::istream& operator>>(std::istream& os, Hotkey& hotkey);
+std::ostream &operator<<(std::ostream &os, const Hotkey &hotkey);
+std::istream &operator>>(std::istream &os, Hotkey &hotkey);
 
-class GUI
-{
+class GUI {
 public: // dtor and ctor
 	GUI();
 	~GUI();
 
 private:
-	GUI(const GUI& g_gui); // Don't copy me
-	GUI& operator=(const GUI& g_gui); // Don't assign me
-	bool operator==(const GUI& g_gui); // Don't compare me
+	GUI(const GUI &g_gui); // Don't copy me
+	GUI &operator=(const GUI &g_gui); // Don't assign me
+	bool operator==(const GUI &g_gui); // Don't compare me
 
 public:
 	/**
@@ -144,7 +159,7 @@ public:
 	 * If this returns false, the user has hit the quit button and you should
 	 * abort the loading.
 	 */
-	bool SetLoadDone(int32_t done, const wxString& newMessage = "");
+	bool SetLoadDone(int32_t done, const wxString &newMessage = "");
 
 	/**
 	 * Sets the scale of the loading bar.
@@ -155,7 +170,7 @@ public:
 
 	void ShowWelcomeDialog(const wxBitmap &icon);
 	void FinishWelcomeDialog();
-    bool IsWelcomeDialogShown();
+	bool IsWelcomeDialogShown();
 
 	/**
 	 * Destroys (hides) the current loading bar.
@@ -164,21 +179,27 @@ public:
 
 	void UpdateMenubar();
 
-	bool IsRenderingEnabled() const { return disabled_counter == 0; }
+	bool IsRenderingEnabled() const {
+		return disabled_counter == 0;
+	}
 
 	void EnableHotkeys();
 	void DisableHotkeys();
 	bool AreHotkeysEnabled() const;
 
 	// This sends the event to the main window (redirecting from other controls)
-	void AddPendingCanvasEvent(wxEvent& event);
+	void AddPendingCanvasEvent(wxEvent &event);
 
-    void OnWelcomeDialogClosed(wxCloseEvent &event);
-    void OnWelcomeDialogAction(wxCommandEvent &event);
+	void OnWelcomeDialogClosed(wxCloseEvent &event);
+	void OnWelcomeDialogAction(wxCommandEvent &event);
 
 protected:
-	void DisableRendering() { ++disabled_counter; }
-	void EnableRendering() { --disabled_counter; }
+	void DisableRendering() {
+		++disabled_counter;
+	}
+	void EnableRendering() {
+		--disabled_counter;
+	}
 
 public:
 	void SetTitle(wxString newtitle);
@@ -192,11 +213,15 @@ public:
 	long PopupDialog(wxWindow* parent, wxString title, wxString text, long style, wxString configsavename = wxEmptyString, uint32_t configsavevalue = 0);
 	long PopupDialog(wxString title, wxString text, long style, wxString configsavename = wxEmptyString, uint32_t configsavevalue = 0);
 
-	void ListDialog(wxWindow* parent, wxString title, const wxArrayString& vec);
-	void ListDialog(const wxString& title, const wxArrayString& vec) { ListDialog(nullptr, title, vec); }
+	void ListDialog(wxWindow* parent, wxString title, const wxArrayString &vec);
+	void ListDialog(const wxString &title, const wxArrayString &vec) {
+		ListDialog(nullptr, title, vec);
+	}
 
 	void ShowTextBox(wxWindow* parent, wxString title, wxString contents);
-	void ShowTextBox(const wxString& title, const wxString& contents) { ShowTextBox(nullptr, title, contents); }
+	void ShowTextBox(const wxString &title, const wxString &contents) {
+		ShowTextBox(nullptr, title, contents);
+	}
 
 	// Get the current GL context
 	// Param is required if the context is to be created.
@@ -205,9 +230,6 @@ public:
 	// Search Results
 	SearchResultWindow* ShowSearchWindow();
 	void HideSearchWindow();
-
-	DuplicatedItemsWindow* ShowDuplicatedItemsWindow();
-	void HideDuplicatedItemsWindow();
 
 	ActionsHistoryWindow* ShowActionsWindow();
 	void HideActionsWindow();
@@ -228,11 +250,15 @@ public:
 	void SwitchMode();
 	void SetSelectionMode();
 	void SetDrawingMode();
-	bool IsSelectionMode() const { return mode == SELECTION_MODE; }
-	bool IsDrawingMode() const { return mode == DRAWING_MODE; }
+	bool IsSelectionMode() const {
+		return mode == SELECTION_MODE;
+	}
+	bool IsDrawingMode() const {
+		return mode == DRAWING_MODE;
+	}
 
-	void SetHotkey(int index, Hotkey& hotkey);
-	const Hotkey& GetHotkey(int index) const;
+	void SetHotkey(int index, Hotkey &hotkey);
+	const Hotkey &GetHotkey(int index) const;
 	void SaveHotkeys() const;
 	void LoadHotkeys();
 
@@ -252,10 +278,16 @@ public:
 	BrushShape GetBrushShape() const;
 	int GetBrushSize() const;
 	int GetBrushVariation() const;
-	int GetSpawnTime() const;
+	int GetSpawnMonsterTime() const;
+	int GetSpawnNpcTime() const;
 
 	// Additional brush parameters
-	void SetSpawnTime(int time) { creature_spawntime = time; }
+	void SetSpawnMonsterTime(int time) {
+		monster_spawntime = time;
+	}
+	void SetSpawnNpcTime(int time) {
+		npc_spawntime = time;
+	}
 	void SetBrushSize(int nz);
 	void SetBrushSizeInternal(int nz);
 	void SetBrushShape(BrushShape bs);
@@ -266,28 +298,23 @@ public:
 	void DecreaseBrushSize(bool wrap = false);
 	void IncreaseBrushSize(bool wrap = false);
 
-
 	// Fetch different useful directories
 	static wxString GetExecDirectory();
 	static wxString GetDataDirectory();
 	static wxString GetLocalDataDirectory();
 	static wxString GetLocalDirectory();
-	static wxString GetExtensionsDirectory();
 
-	void discoverDataDirectory(const wxString& existentFile);
-	wxString getFoundDataDirectory() { return m_dataDirectory; }
+	void discoverDataDirectory(const wxString &existentFile);
+	wxString getFoundDataDirectory() {
+		return m_dataDirectory;
+	}
 
-	// Load/unload a client version (takes care of dialogs aswell)
-	void UnloadVersion();
-	bool LoadVersion(ClientVersionID ver, wxString& error, wxArrayString& warnings, bool force = false);
-	// The current version loaded (returns CLIENT_VERSION_NONE if no version is loaded)
-	const ClientVersion& GetCurrentVersion() const;
-	ClientVersionID GetCurrentVersionID() const;
-	// If any version is loaded at all
-	bool IsVersionLoaded() const { return loaded_version != CLIENT_VERSION_NONE; }
+	// Load/unload a map tabs (takes care of dialogs aswell)
+	void unloadMapWindow();
+	bool loadMapWindow(wxString &error, wxArrayString &warnings, bool force = false);
 
 	// Centers current view on position
-	void SetScreenCenterPosition(const Position& position, bool showIndicator = true);
+	void SetScreenCenterPosition(const Position &position, bool showIndicator = true);
 	// Refresh the view canvas
 	void RefreshView();
 	// Fit all/specified current map view to map dimensions
@@ -300,7 +327,9 @@ public:
 	void PreparePaste();
 	void StartPasting();
 	void EndPasting();
-	bool IsPasting() const { return pasting; }
+	bool IsPasting() const {
+		return pasting;
+	}
 
 	bool CanUndo();
 	bool CanRedo();
@@ -308,7 +337,9 @@ public:
 	bool DoRedo();
 
 	// Editor interface
-	wxAuiManager* GetAuiManager() const { return aui_manager; }
+	wxAuiManager* GetAuiManager() const {
+		return aui_manager;
+	}
 	EditorTab* GetCurrentTab();
 	EditorTab* GetTab(int idx);
 	int GetTabCount() const;
@@ -323,22 +354,24 @@ public:
 	void NewMapView();
 
 	// Map
-	Map& GetCurrentMap();
+	Map &GetCurrentMap();
 	int GetOpenMapCount();
 	bool ShouldSave();
 	void SaveCurrentMap(FileName filename, bool showdialog); // "" means default filename
-	void SaveCurrentMap(bool showdialog = true) { SaveCurrentMap(wxString(""), showdialog); }
+	void SaveCurrentMap(bool showdialog = true) {
+		SaveCurrentMap(wxString(""), showdialog);
+	}
 	bool NewMap();
 	void OpenMap();
 	void SaveMap();
 	void SaveMapAs();
-	bool LoadMap(const FileName& fileName);
+	bool LoadMap(const FileName &fileName);
+	const MapVersion &getLoadedMapVersion() const {
+		return m_loadedMapVersion;
+	}
 
 protected:
-	bool LoadDataFiles(wxString& error, wxArrayString& warnings);
-	ClientVersion* getLoadedVersion() const {
-		return loaded_version == CLIENT_VERSION_NONE ? nullptr : ClientVersion::get(loaded_version);
-	}
+	bool LoadDataFiles(wxString &error, wxArrayString &warnings);
 
 	//=========================================================================
 	// Palette Interface
@@ -362,7 +395,7 @@ public:
 	// Returns primary palette
 	PaletteWindow* GetPalette();
 	// Returns list of all palette, first in the list is primary
-	const std::list<PaletteWindow*>& GetPalettes();
+	const std::list<PaletteWindow*> &GetPalettes();
 
 	// Hidden from public view
 protected:
@@ -383,7 +416,6 @@ public:
 	MinimapWindow* minimap;
 	DCButton* gem; // The small gem in the lower-right corner
 	SearchResultWindow* search_result_window;
-	DuplicatedItemsWindow* duplicated_items_window;
 	ActionsHistoryWindow* actions_history_window;
 	GraphicManager gfx;
 
@@ -399,7 +431,8 @@ public:
 	WaypointBrush* waypoint_brush;
 	OptionalBorderBrush* optional_brush;
 	EraserBrush* eraser;
-	SpawnBrush* spawn_brush;
+	SpawnMonsterBrush* spawn_brush;
+	SpawnNpcBrush* spawn_npc_brush;
 	DoorBrush* normal_door_brush;
 	DoorBrush* locked_door_brush;
 	DoorBrush* magic_door_brush;
@@ -410,9 +443,11 @@ public:
 	FlagBrush* rook_brush;
 	FlagBrush* nolog_brush;
 	FlagBrush* pvp_brush;
+	ZoneBrush* zone_brush;
+
+	std::unique_ptr<canary::protobuf::appearances::Appearances> m_appearancesPtr; // Protobuf appearances file parsed
 
 protected:
-
 	//=========================================================================
 	// Global GUI state
 	//=========================================================================
@@ -421,7 +456,7 @@ protected:
 
 	wxGLContext* OGLContext;
 
-	ClientVersionID loaded_version;
+	MapVersion m_loadedMapVersion;
 	EditorMode mode;
 	bool pasting;
 
@@ -436,7 +471,8 @@ protected:
 	BrushShape brush_shape;
 	int brush_size;
 	int brush_variation;
-	int creature_spawntime;
+	int monster_spawntime;
+	int npc_spawntime;
 
 	bool use_custom_thickness;
 	float custom_thickness_mod;
@@ -455,26 +491,25 @@ protected:
 	int disabled_counter;
 
 	friend class RenderingLock;
+	friend class IOMinimap;
 	friend MapTab::MapTab(MapTabbook*, Editor*);
 	friend MapTab::MapTab(const MapTab*);
 };
 
 extern GUI g_gui;
 
-class RenderingLock
-{
+class RenderingLock {
 	bool acquired;
+
 public:
-	RenderingLock() : acquired(true)
-	{
+	RenderingLock() :
+		acquired(true) {
 		g_gui.DisableRendering();
 	}
-	~RenderingLock()
-	{
+	~RenderingLock() {
 		release();
 	}
-	void release()
-	{
+	void release() {
 		g_gui.EnableRendering();
 		acquired = false;
 	}
@@ -485,32 +520,27 @@ public:
  * which will the be popped when it destructs.
  * Look in the GUI class for documentation of what the methods mean.
  */
-class ScopedLoadingBar
-{
+class ScopedLoadingBar {
 public:
-	ScopedLoadingBar(wxString message, bool canCancel = false)
-	{
+	ScopedLoadingBar(wxString message, bool canCancel = false) {
 		g_gui.CreateLoadBar(message, canCancel);
 	}
-	~ScopedLoadingBar()
-	{
+	~ScopedLoadingBar() {
 		g_gui.DestroyLoadBar();
 	}
 
-	void SetLoadDone(int32_t done, const wxString& newmessage = wxEmptyString)
-	{
+	void SetLoadDone(int32_t done, const wxString &newmessage = wxEmptyString) {
 		g_gui.SetLoadDone(done, newmessage);
 	}
 
-	void SetLoadScale(int32_t from, int32_t to)
-	{
+	void SetLoadScale(int32_t from, int32_t to) {
 		g_gui.SetLoadScale(from, to);
 	}
 };
 
 #define UnnamedRenderingLock() RenderingLock __unnamed_rendering_lock_##__LINE__
 
-void SetWindowToolTip(wxWindow* a, const wxString& tip);
-void SetWindowToolTip(wxWindow* a, wxWindow* b, const wxString& tip);
+void SetWindowToolTip(wxWindow* a, const wxString &tip);
+void SetWindowToolTip(wxWindow* a, wxWindow* b, const wxString &tip);
 
 #endif

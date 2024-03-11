@@ -10,7 +10,8 @@
         <separator/>
         <menu name="$Import">
             <item name="$Import Map..." action="IMPORT_MAP" help="Import map data from another map file."/>
-            <item name="Import $Monsters/NPC..." action="IMPORT_MONSTERS" help="Import either a monsters.xml file or a specific monster/NPC."/>
+            <item name="Import $Monsters..." action="IMPORT_MONSTERS" help="Import either a monsters.xml file or a specific monster."/>
+            <item name="Import $NPC..." action="IMPORT_NPCS" help="Import either a npc.xml file or a specific NPC."/>
             <item name="Import Mi$nimap..." action="IMPORT_MINIMAP" help="Import map data from a .bmp file."/>
         </menu>
         <menu name="$Export">
@@ -37,23 +38,24 @@
             <item name="Find $Action" action="SEARCH_ON_MAP_ACTION" help="Find all items with an action ID on map."/>
             <item name="Find $Container" action="SEARCH_ON_MAP_CONTAINER" help="Find all containers on map."/>
             <item name="Find $Writeable" action="SEARCH_ON_MAP_WRITEABLE" help="Find all writeable items on map."/>
-            <separator/>
-            <item name="Find $Duplicated" action="SEARCH_ON_MAP_DUPLICATED_ITEMS" help="Find for duplicated items on map."/>
+            <item name="Find $Duplicate Items" action="SEARCH_ON_MAP_DUPLICATE" help="Find all positions where there are duplicate items on the map."/>
         </menu>
         <separator/>
         <menu name="$Border Options">
             <item name="Border $Automagic" hotkey="A" action="AUTOMAGIC" help="Turns on all automatic border functions."/>
-			<separator/>
+            <separator/>
             <item name="$Borderize Selection" hotkey="Ctrl+B" action="BORDERIZE_SELECTION" help="Creates automatic borders in the entire selected area."/>
             <item name="Borderize $Map" action="BORDERIZE_MAP" help="Reborders the entire map."/>
             <item name="Ra$ndomize Selection" action="RANDOMIZE_SELECTION" help="Randomizes the ground tiles of the selected area."/>
             <item name="$Randomize Map" action="RANDOMIZE_MAP" help="Randomizes all tiles of the entire map."/>
         </menu>
-        <menu name="$Other Options">
+        <menu name="$Tools">
             <item name="$Remove Items by ID..." action="MAP_REMOVE_ITEMS" help="Removes all items with the selected ID from the map."/>
             <item name="Remove $all corpses..." action="MAP_REMOVE_CORPSES" help="Removes all corpses from the map."/>
             <item name="Remove all $unreachable tiles..." action="MAP_REMOVE_UNREACHABLE_TILES" help="Removes all tiles that cannot be reached (or seen) by the player from the map."/>
-            <item name="Remove empty spawns" action="MAP_REMOVE_EMPTY_SPAWNS" help="Removes all empty spawns from the map."/>
+            <item name="Remove all $duplicates items..." action="REMOVE_ON_MAP_DUPLICATE_ITEMS" help="Removes all items duplicates on map."/>
+            <item name="Remove empty monsters spawns" action="MAP_REMOVE_EMPTY_MONSTERS_SPAWNS" help="Removes all empty monsters spawns from the map."/>
+            <item name="Remove empty npcs spawns" action="MAP_REMOVE_EMPTY_NPCS_SPAWNS" help="Removes all empty npcs spawns from the map."/>
             <item name="$Clear Invalid Houses" action="CLEAR_INVALID_HOUSES" help="Clears house tiles not belonging to any house."/>
             <item name="Clear $Modified State" action="CLEAR_MODIFIED_STATE" help="Clears the modified state from all tiles."/>
         </menu>
@@ -80,6 +82,8 @@
         <item name="Replace Items on Selection" action="REPLACE_ON_SELECTION_ITEMS" help="Replace items on selected area."/>
         <item name="Find Item on Selection" action="SEARCH_ON_SELECTION_ITEM" help="Find items on selected area."/>
         <item name="Remove Item on Selection" action="REMOVE_ON_SELECTION_ITEM" help="Remove item on selected area."/>
+        <item name="Remove Monsters on Selection" action="REMOVE_ON_SELECTION_MONSTER" help="Remove monsters on selected area."/>
+        <item name="Remove Duplicates Items on Selection" action="REMOVE_ON_SELECTION_DUPLICATE_ITEMS" help="Removes all items duplicates selected area."/>
         <separator/>
         <menu name="$Find on Selection">
             <item name="Find $Everything" action="SEARCH_ON_SELECTION_EVERYTHING" help="Find all unique/action/text/container items."/>
@@ -88,8 +92,7 @@
             <item name="Find $Action" action="SEARCH_ON_SELECTION_ACTION" help="Find all items with an action ID on selected area."/>
             <item name="Find $Container" action="SEARCH_ON_SELECTION_CONTAINER" help="Find all containers on selected area."/>
             <item name="Find $Writeable" action="SEARCH_ON_SELECTION_WRITEABLE" help="Find all writeable items on selected area."/>
-            <separator/>
-            <item name="Find $Duplicated"  hotkey="Ctrl+R" action="SEARCH_ON_SELECTION_DUPLICATED_ITEMS" help="Find for duplicated items on selected area."/>
+            <item name="Find $Duplicate Items" action="SEARCH_ON_SELECTION_DUPLICATE" help="Find all positions where there are duplicate items on selected area."/>
         </menu>
         <separator/>
         <menu name="$Selection Mode">
@@ -108,7 +111,6 @@
             <item name="Brushes" action="VIEW_TOOLBARS_BRUSHES" help="Show or hide the Brushes toolbar."/>
             <item name="Position" action="VIEW_TOOLBARS_POSITION" help="Show or hide the Position toolbar."/>
             <item name="Sizes" action="VIEW_TOOLBARS_SIZES" help="Show or hide the Sizes toolbar."/>
-            <item name="Indicators" action="VIEW_TOOLBARS_INDICATORS" help="Show or hide the Indicators toolbar."/>
             <item name="Standard" action="VIEW_TOOLBARS_STANDARD" help="Show or hide the Standard toolbar."/>
         </menu>
         <item name="$New View" hotkey="Ctrl+Shift+N" action="NEW_VIEW" help="Creates a new view of the current map."/>
@@ -130,8 +132,10 @@
         <item name="Show $Grid" hotkey="Shift+G" action="SHOW_GRID" help="Shows a grid over all items."/>
         <item name="H$ighlight items" hotkey="V" action="HIGHLIGHT_ITEMS" help="Highlight tiles with items on them."/>
         <separator/>
-        <item name="Show creatures" hotkey="F" action="SHOW_CREATURES" help="Show creatures on the map."/>
-        <item name="Show spawns" hotkey="S" action="SHOW_SPAWNS" help="Show spawns on the map."/>
+        <item name="Show monsters" hotkey="F" action="SHOW_MONSTERS" help="Show monsters on the map."/>
+        <item name="Show monsters spawns" hotkey="S" action="SHOW_SPAWNS_MONSTER" help="Show monsters spawns on the map."/>
+        <item name="Show npcs" hotkey="X" action="SHOW_NPCS" help="Show npcs on the map."/>
+        <item name="Show npcs spawns" hotkey="U" action="SHOW_SPAWNS_NPC" help="Show npcs spawns on the map."/>
         <item name="Sho$w special" hotkey="E" action="SHOW_SPECIAL" help="Show special tiles on the map, like PZ."/>
         <item name="Show as minimap" hotkey="Shift+E" action="SHOW_AS_MINIMAP" help="Show only the tile minimap colors."/>
         <item name="Only show $colors" hotkey="Ctrl+E" action="SHOW_ONLY_COLORS" help="Show only the special tiles on the map."/>
@@ -155,8 +159,10 @@
         <item name="$Doodad Palette" hotkey="D" action="SELECT_DOODAD" help="Select the Doodad palette."/>
         <item name="$Item Palette" hotkey="I" action="SELECT_ITEM" help="Select the Item palette."/>
         <item name="$House Palette" hotkey="H" action="SELECT_HOUSE" help="Select the House palette."/>
-        <item name="$Creature Palette" hotkey="C" action="SELECT_CREATURE" help="Select the Creature palette."/>
+        <item name="$Creature Palette" hotkey="C" action="SELECT_MONSTER" help="Select the Creature palette."/>
+        <item name="$Npc Palette" hotkey="N" action="SELECT_NPC" help="Select the Npc palette."/>
         <item name="$Waypoint Palette" hotkey="W" action="SELECT_WAYPOINT" help="Select the Waypoint palette."/>
+        <item name="$Zones Palette" hotkey="Z" action="SELECT_ZONES" help="Select the Zones palette."/>
         <item name="$RAW Palette" hotkey="R" action="SELECT_RAW" help="Select the RAW palette."/>
     </menu>
     <!--
@@ -190,7 +196,6 @@
         <item name="Floor 15" action="FLOOR_15" help=""/>
     </menu>
     <menu name="$About">
-        <item name="$Extensions..." hotkey="F2" action="EXTENSIONS" help=""/>
         <item name="Goto $Website" hotkey="F3" action="GOTO_WEBSITE" help=""/>
         <item name="$About..." hotkey="F1" action="ABOUT" help=""/>
     </menu>

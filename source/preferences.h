@@ -15,28 +15,25 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 //////////////////////////////////////////////////////////////////////
 
-
 #ifndef RME_PREFERENCES_WINDOW_H_
 #define RME_PREFERENCES_WINDOW_H_
 
 #include "main.h"
-#include <wx/listbook.h>
-#include <wx/collpane.h>
-#include <wx/clrpicker.h>
 
-class PreferencesWindow : public wxDialog
-{
+class PreferencesWindow : public wxDialog {
 public:
-	explicit PreferencesWindow(wxWindow* parent) : PreferencesWindow(parent, false) {};
-    PreferencesWindow(wxWindow* parent, bool clientVersionSelected);
+	explicit PreferencesWindow(wxWindow* parent);
 	virtual ~PreferencesWindow();
 
-	void OnClickDefaults(wxCommandEvent&);
-	void OnClickApply(wxCommandEvent&);
-	void OnClickOK(wxCommandEvent&);
-	void OnClickCancel(wxCommandEvent&);
-
-	void OnCollapsiblePane(wxCollapsiblePaneEvent&);
+	void OnClickDefaults(wxCommandEvent &);
+	void OnClickApply(wxCommandEvent &);
+	void OnClickOK(wxCommandEvent &);
+	void OnClickCancel(wxCommandEvent &);
+	void SelectNewAssetsFolder(wxCommandEvent &event);
+	void OnCollapsiblePane(wxCollapsiblePaneEvent &);
+	wxBookCtrl &getBookCtrl() {
+		return *book;
+	}
 
 protected:
 	void SetDefaults();
@@ -55,6 +52,7 @@ protected:
 	wxSpinCtrl* worker_threads_spin;
 	wxSpinCtrl* replace_size_spin;
 	wxRadioBox* position_format;
+	wxRadioBox* area_format;
 
 	// Editor
 	wxCheckBox* group_actions_chkbox;
@@ -64,6 +62,7 @@ protected:
 	wxCheckBox* eraser_leave_unique_chkbox;
 	wxCheckBox* doodad_erase_same_chkbox;
 	wxCheckBox* auto_create_spawn_chkbox;
+	wxCheckBox* auto_create_spawn_npc_chkbox;
 	wxCheckBox* allow_multiple_orderitems_chkbox;
 	wxCheckBox* merge_move_chkbox;
 	wxCheckBox* merge_paste_chkbox;
@@ -71,7 +70,6 @@ protected:
 	// Graphics
 	wxCheckBox* icon_selection_shadow_chkbox;
 	wxChoice* icon_background_choice;
-	wxCheckBox* use_memcached_chkbox;
 	wxDirPickerCtrl* screenshot_directory_picker;
 	wxChoice* screenshot_format_choice;
 	wxCheckBox* hide_items_when_zoomed_chkbox;
@@ -108,11 +106,11 @@ protected:
 
 	// Client info
 	wxChoice* default_version_choice;
-	std::vector<wxDirPickerCtrl*> version_dir_pickers;
+	wxDirPickerCtrl* version_dir_picker;
 	wxCheckBox* check_sigs_chkbox;
 
 	// Create controls
-	wxChoice* AddPaletteStyleChoice(wxWindow* parent, wxSizer* sizer, const wxString& short_description, const wxString& description, const std::string& setting);
+	wxChoice* AddPaletteStyleChoice(wxWindow* parent, wxSizer* sizer, const wxString &short_description, const wxString &description, const std::string &setting);
 	void SetPaletteStyleChoice(wxChoice* ctrl, int key);
 
 	// Create windows

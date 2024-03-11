@@ -28,28 +28,27 @@
 #include "welcome_dialog.h"
 
 class Item;
-class Creature;
+class Monster;
+class Npc;
 
 class MainFrame;
 class MapWindow;
 class wxEventLoopBase;
 class wxSingleInstanceChecker;
 
-class Application : public wxApp
-{
+class Application : public wxApp {
 public:
 	~Application();
 	virtual bool OnInit();
-    virtual void OnEventLoopEnter(wxEventLoopBase* loop);
-	virtual void MacOpenFiles(const wxArrayString& fileNames);
+	virtual void OnEventLoopEnter(wxEventLoopBase* loop);
+	virtual void MacOpenFiles(const wxArrayString &fileNames);
 	virtual int OnExit();
 	void Unload();
 
 private:
-    bool m_startup;
-    wxString m_file_to_open;
-	void FixVersionDiscrapencies();
-	bool ParseCommandLineMap(wxString& fileName);
+	bool m_startup;
+	wxString m_file_to_open;
+	bool ParseCommandLineMap(wxString &fileName);
 
 	virtual void OnFatalException();
 
@@ -57,47 +56,49 @@ private:
 	RMEProcessServer* m_proc_server;
 	wxSingleInstanceChecker* m_single_instance_checker;
 #endif
-
 };
 
 class MainMenuBar;
 
-class MainFrame : public wxFrame
-{
+class MainFrame : public wxFrame {
 public:
-	MainFrame(const wxString& title,
-		const wxPoint& pos, const wxSize& size);
+	MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size);
 	~MainFrame();
 
 	void UpdateMenubar();
 	bool DoQueryClose();
 	bool DoQuerySave(bool doclose = true);
+	void ShowMissingMonsters();
+	void ShowMissingNpcs();
 	bool DoQueryImportCreatures();
 	bool LoadMap(FileName name);
 
-	void AddRecentFile(const FileName& file);
+	void AddRecentFile(const FileName &file);
 	void LoadRecentFiles();
 	void SaveRecentFiles();
 	std::vector<wxString> GetRecentFiles();
 
-	MainToolBar* GetAuiToolBar() const { return tool_bar; }
+	MainToolBar* GetAuiToolBar() const {
+		return tool_bar;
+	}
 
-	void OnUpdateMenus(wxCommandEvent& event);
-	void OnUpdateActions(wxCommandEvent& event);
+	void OnUpdateMenus(wxCommandEvent &event);
+	void OnUpdateActions(wxCommandEvent &event);
 	void UpdateFloorMenu();
 	void UpdateIndicatorsMenu();
-	void OnIdle(wxIdleEvent& event);
-	void OnExit(wxCloseEvent& event);
+	void OnIdle(wxIdleEvent &event);
+	void OnExit(wxCloseEvent &event);
 
 #ifdef _USE_UPDATER_
-	void OnUpdateReceived(wxCommandEvent& event);
+	void OnUpdateReceived(wxCommandEvent &event);
 #endif
 
 #ifdef __WINDOWS__
-	virtual bool MSWTranslateMessage(WXMSG *msg);
+	virtual bool MSWTranslateMessage(WXMSG* msg);
 #endif
 
-	void PrepareDC(wxDC& dc);
+	void PrepareDC(wxDC &dc);
+
 protected:
 	MainMenuBar* menu_bar;
 	MainToolBar* tool_bar;

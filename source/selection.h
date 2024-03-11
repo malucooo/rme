@@ -19,6 +19,7 @@
 #define RME_SELECTION_H
 
 #include "position.h"
+#include "npc.h"
 #include "action.h"
 
 class Action;
@@ -27,21 +28,24 @@ class BatchAction;
 
 class SelectionThread;
 
-class Selection
-{
+class Selection {
 public:
-	Selection(Editor& editor);
+	Selection(Editor &editor);
 	~Selection();
 
 	// Selects the items on the tile/tiles
 	// Won't work outside a selection session
 	void add(const Tile* tile, Item* item);
-	void add(const Tile* tile, Spawn* spawn);
-	void add(const Tile* tile, Creature* creature);
+	void add(const Tile* tile, SpawnMonster* spawnMonster);
+	void add(const Tile* tile, SpawnNpc* spawnNpc);
+	void add(const Tile* tile, Monster* monster);
+	void add(const Tile* tile, Npc* npc);
 	void add(const Tile* tile);
 	void remove(Tile* tile, Item* item);
-	void remove(Tile* tile, Spawn* spawn);
-	void remove(Tile* tile, Creature* creature);
+	void remove(Tile* tile, SpawnMonster* spawnMonster);
+	void remove(Tile* tile, SpawnNpc* spawnNpc);
+	void remove(Tile* tile, Monster* monster);
+	void remove(Tile* tile, Npc* npc);
 	void remove(Tile* tile);
 
 	// The tile will be added to the list of selected tiles, however, the items on the tile won't be selected
@@ -52,7 +56,9 @@ public:
 	void clear();
 
 	// Returns true when inside a session
-	bool isBusy() const noexcept { return busy; }
+	bool isBusy() const noexcept {
+		return busy;
+	}
 
 	//
 	Position minPosition() const;
@@ -77,16 +83,29 @@ public:
 	// This deletes the thread
 	void join(SelectionThread* thread);
 
-	size_t size() const noexcept { return tiles.size(); }
-	bool empty() const noexcept { return tiles.empty(); }
+	size_t size() const noexcept {
+		return tiles.size();
+	}
+	bool empty() const noexcept {
+		return tiles.empty();
+	}
 	void updateSelectionCount();
-	TileSet::iterator begin() noexcept { return tiles.begin(); }
-	TileSet::iterator end() noexcept { return tiles.end(); }
-	const TileSet& getTiles() const noexcept { return tiles; }
-	Tile* getSelectedTile() { ASSERT(size() == 1); return *tiles.begin(); }
+	TileSet::iterator begin() noexcept {
+		return tiles.begin();
+	}
+	TileSet::iterator end() noexcept {
+		return tiles.end();
+	}
+	const TileSet &getTiles() const noexcept {
+		return tiles;
+	}
+	Tile* getSelectedTile() {
+		ASSERT(size() == 1);
+		return *tiles.begin();
+	}
 
 private:
-	Editor& editor;
+	Editor &editor;
 	BatchAction* session;
 	Action* subsession;
 	TileSet tiles;
@@ -95,16 +114,15 @@ private:
 	friend class SelectionThread;
 };
 
-class SelectionThread : public wxThread
-{
+class SelectionThread : public wxThread {
 public:
-	SelectionThread(Editor& editor, Position start, Position end);
+	SelectionThread(Editor &editor, Position start, Position end);
 
 	void Execute(); // Calls "Create" and then "Run"
 
 protected:
 	virtual ExitCode Entry();
-	Editor& editor;
+	Editor &editor;
 	Position start, end;
 	Selection selection;
 	Action* result;
